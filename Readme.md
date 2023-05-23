@@ -19,12 +19,15 @@ Before proceeding, ensure you have the following prerequisites:
 
 2. Navigate to the cloned repository:
 
-```cd <repository_directory>```
+```
+cd <repository_directory>
+```
 
 
 3. Edit the Ansible playbook file install_node_exporter.yaml to customize any variables or settings as per your requirements.
 
 Run the Ansible playbook:
+
 ```
 ansible-playbook install_node_exporter.yaml
 ```
