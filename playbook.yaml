@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Node Exporter
+    apt:
+      name: node_exporter
+      state: present
+
+  - name: Create Node Exporter Namespace
+    kubectl:
+      create:
+        object: namespace
+        name: node-exporter
+
+  - name: Deploy Node Exporter Pod
+    kubectl:
+      create:
+        object: pod
+        name: node-exporter
+        namespace: node-exporter
+        spec:
+          containers:
+          - name: node-exporter
+            image: prom/node-exporter
+            ports:
+            - containerPort: 9100
+
+  - name: Wait for Node Exporter Pod to be Running
+    kubectl:
+      wait:
+        for:
+          condition:
+            status:
+              phase: Running
+          timeout: 300
+          namespace: node-exporter
+
+  - name: Check Node Exporter Metrics
+    command: curl http://localhost:9100/metrics
+    register: node_exporter_metrics
+
+  - debug:
+      var: node_exporter_metrics.stdout
